@@ -1,0 +1,38 @@
+CREATE TABLE Employee(emp_id INT PRIMARY KEY, dept_id INT, emp_name VARCHAR(50), DoJ DATE, salary NUMBER(10,2), commission NUMBER(10,2), job_title VARCHAR(50));
+
+INSERT INTO Employee VALUES (1,10,'Amit',TO_DATE('2010-05-10','YYYY-MM-DD'),10000,NULL,'Developer');
+INSERT INTO Employee VALUES (2,20,'Rahul',TO_DATE('2015-06-15','YYYY-MM-DD'),15000,NULL,'Manager');
+
+CREATE TABLE Job_History(emp_id INT, old_job_title VARCHAR(50), old_dept_id INT, start_date DATE, end_date DATE);
+
+-- TRIGGER 1: Salary should not be decreased
+CREATE OR REPLACE TRIGGER trg_salary_check
+BEFORE UPDATE OF salary ON Employee
+FOR EACH ROW
+BEGIN
+IF :NEW.salary < :OLD.salary THEN
+RAISE_APPLICATION_ERROR(-20001,'Salary cannot be decreased');
+END IF;
+END;
+/
+
+-- TRIGGER 2: Job title change history
+CREATE OR REPLACE TRIGGER trg_job_history
+BEFORE UPDATE OF job_title ON Employee
+FOR EACH ROW
+BEGIN
+INSERT INTO Job_History VALUES(
+:OLD.emp_id,
+:OLD.job_title,
+:OLD.dept_id,
+:OLD.DoJ,
+SYSDATE
+);
+END;
+/
+
+-- TEST CASE: salary update
+UPDATE Employee SET salary = 9000 WHERE emp_id = 1;
+
+-- TEST CASE: job title update
+UPDATE Employee SET job_title = 'Team Lead' WHERE emp_id = 2;
