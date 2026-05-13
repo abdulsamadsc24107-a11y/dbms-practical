@@ -1,0 +1,38 @@
+CREATE TABLE Manager(Manager_id INT PRIMARY KEY, Manager_name VARCHAR(50));
+
+CREATE TABLE Departments(Department_id INT PRIMARY KEY, Department_name VARCHAR(50), Manager_id INT, Location_id INT,
+FOREIGN KEY (Manager_id) REFERENCES Manager(Manager_id));
+
+CREATE TABLE Locations(Location_id INT PRIMARY KEY, Street_address VARCHAR(100), Postal_code VARCHAR(20), City VARCHAR(50), State VARCHAR(50), Country_id VARCHAR(10));
+
+CREATE TABLE Employee(Employee_id INT PRIMARY KEY, First_name VARCHAR(50), Last_name VARCHAR(50), Hire_date DATE, Salary DECIMAL(10,2), Job_title VARCHAR(50), Manager_id INT, Department_id INT,
+FOREIGN KEY (Manager_id) REFERENCES Manager(Manager_id),
+FOREIGN KEY (Department_id) REFERENCES Departments(Department_id));
+
+-- SAMPLE DATA
+INSERT INTO Manager VALUES (1,'Ravi'),(2,'John');
+
+INSERT INTO Departments VALUES (10,'IT',1,100),(20,'HR',2,101);
+
+INSERT INTO Locations VALUES (100,'Street A','411001','Pune','MH','US'),(101,'Street B','110001','Delhi','DL','IN');
+
+INSERT INTO Employee VALUES 
+(1,'Amit','Singh','2020-01-01',50000,'Developer',1,10),
+(2,'Rahul','Sharma','2019-05-10',70000,'Manager',2,20),
+(3,'Sneha','Patil','2021-03-15',90000,'Analyst',1,10);
+
+SELECT First_name, Last_name, Salary 
+FROM Employee 
+WHERE Salary > (SELECT Salary FROM Employee WHERE Last_name='Singh');
+
+
+SELECT e.First_name, e.Last_name
+FROM Employee e
+JOIN Departments d ON e.Department_id = d.Department_id
+JOIN Locations l ON d.Location_id = l.Location_id
+WHERE e.Manager_id IS NOT NULL AND l.Country_id='US';
+
+
+SELECT First_name, Last_name, Salary
+FROM Employee
+WHERE Salary > (SELECT AVG(Salary) FROM Employee);
