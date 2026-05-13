@@ -1,0 +1,16 @@
+db.createCollection("Social_Media");
+
+db.Social_Media.insertMany([
+{User_Id:1,User_Name:"Amit",No_of_Posts:120,No_of_Friends:6,Friends_List:["Rahul"],Interests:["Music"]},
+{User_Id:2,User_Name:"Rahul",No_of_Posts:80,No_of_Friends:4,Friends_List:["Amit"],Interests:["Movies"]}
+]);
+
+db.Social_Media.find().pretty();
+
+db.Social_Media.find({No_of_Posts:{$gt:100}});
+
+db.Social_Media.find({}, {User_Name:1,Friends_List:1,_id:0});
+
+db.Social_Media.find({No_of_Friends:{$gt:5}}, {User_Id:1,Friends_List:1,_id:0});
+
+db.Social_Media.find().sort({No_of_Posts:-1});
